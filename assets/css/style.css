@@ -13,7 +13,7 @@
     font-family: 'Roboto', sans-serif;
     color: white;
     background-color: slategray;
-    width: 70%;
+
    
     
 }
@@ -26,18 +26,20 @@
     max-height: 70%;
     
 }
-
-.container {
-    height:100vh;
-    width: 100vw;
+.menu{
+    background-color: slategray;
+    padding: 1rem;
 }
-
-body {
+.container {
+    display: flex;
+    object-fit: contain;
+    border-radius: 10px;
     background: 
         url(../images/backgrounds/emperorthroneroomfull.jpg);
     background-size: cover;
-    width: 100vw;
-    height: 100vh;
+}
+
+body {
 }
 
 .row {
