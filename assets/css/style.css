@@ -2,19 +2,18 @@
 
 
 .card {
-    flex-grow: 1;  
+    flex-grow: 1; 
+    
 }
 
 .card-descr {
-    margin: auto;
 }
 
 .card-descr p{
     font-family: 'Roboto', sans-serif;
     color: white;
     background-color: slategray;
-
-   
+    text-align: center;
     
 }
 .card-img {
