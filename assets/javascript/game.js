@@ -110,3 +110,30 @@ function createCharacterCard(character) {
 }
 
 main();
+
+
+
+
+//set up a conditonal sequence in main where it starts with all characters
+
+//when first character is picked, set playerPicked = true executes main again, this time taking away
+//other two characters on their side (also now says choose who you will face first)
+
+//when enemy is chosen, set enemyPicked= true, execute main, take 
+//other two enemies away.
+//disable clickable characters
+//set instructions/controls in middle to attack mode:
+//attack button
+//instructions
+
+//when attack button is pressed:
+//substract (playerAttack - enemyDef) from enemy HP
+    //if enemyHp=0 
+        //bring other two enemies on the screen
+           //choose next enemy
+            //on click get rid of other enemy and center new enemy
+              //return to attack mode
+// else if enemy counters, substract their from player hp
+    //if player HP = 0, Game Over
+        //Try again? (reset)
+//add 5 to player attack stat.
