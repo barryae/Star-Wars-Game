@@ -6,9 +6,12 @@
     
 }
 
-.card-descr {
+.toolbar {
+    font-family: 'Roboto', sans-serif;
+    color: white;
+    background-color: rgb(38, 44, 51);
+    text-align: center;
 }
-
 .card-descr p{
     font-family: 'Roboto', sans-serif;
     color: white;
@@ -41,14 +44,14 @@
 body {
 }
 
-.row {
+.column {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
     width: 100%;
   }
   
-  .column {
+  .row {
     display: flex;
     flex-direction: row;
     flex-basis: 100%;

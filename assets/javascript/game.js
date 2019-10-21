@@ -72,28 +72,111 @@ const characters = [
         quote: "I will not fight you",
     },
 ]
+const toolbarText = [`
+                <div class="column instructions">
+                    <h2>Instructions:</h2>
+                    <p>Choose a player from the Jedi or Sith.</p>
+                    <p>You will then
+                    fight the three members from the other side in the order you
+                    choose. Your enemies cannot defend but they can counterattack.
+                    your attack will go up each time you attack as well. Good Luck!</p>
+                </div>
+                <div class="column controls">
+        
+                    <button>Reset</button>
+                </div>`,
+    `<div class="column instructions">
+                    <h2>Instructions:</h2>
+                    <p>You will have to defeat all three enemies to win!
+                        Choose your first opponent wisely.</p>
+                </div>
+                <div class="column controls">
+                   
+                    <button>Reset</button>
+                </div>`,
+    `<div class="column instructions">
+                    <h2>Instructions</h2>
+                    <p>Click attack to strike. Your attack will go up each time.
+                    Your enemy will counterattack automatically.</p>
+                </div>
+                <div class="column controls">
+                  
+                    <button>Attack</button>
+                    <button>Reset</button>
+                </div>`
+];
+let gameState = null;
+let playerChoice = null;
+let enemyChoice = null;
 
 function main() {
     let darkSide = document.getElementsByClassName("dark-side")[0];
     let lightSide = document.getElementsByClassName("light-side")[0];
-    let playerChoice = null;
+    let toolbar = document.getElementsByClassName("toolbar")[0];
+    characterRender();
+    toolbarRender();
 
-    for (let i = 0; i < characters.length; i++) {
-        let card = createCharacterCard(characters[i]);
-        if (characters[i].sith === true) {
-            darkSide.appendChild(card);
-        } else {
-            lightSide.appendChild(card);
+    function characterRender() {
+        if (gameState === null) {
+            for (let i = 0; i < characters.length; i++) {
+                let card = createCharacterCard(characters[i]);
+                if (characters[i].sith === true) {
+                    darkSide.appendChild(card);
+                } else {
+                    lightSide.appendChild(card);
+                }
+            }
+        } else if (gameState === "choose enemy") {
+            let card = createCharacterCard(playerChoice);
+            if (playerChoice.sith === true) {
+                darkSide.innerHTML = '';
+                darkSide.appendChild(card);
+            } else {
+                lightSide.innerHTML = '';
+                lightSide.appendChild(card);
+            }
+
+        } else if (gameState === "attack mode") {
+            let card = createCharacterCard(enemyChoice);
+            if (enemyChoice.sith === true) {
+                darkSide.innerHTML = '';
+                darkSide.appendChild(card);
+            } else {
+                lightSide.innerHTML = '';
+                lightSide.appendChild(card);
+            }
+
         }
+
     }
-}
 
-//look up truthy and falsey//
+    function toolbarRender() {
 
-function createCharacterCard(character) {
-    let card = document.createElement("div");
-    card.className = "card";
-    card.innerHTML = `
+        if (gameState === null) {
+            let toolbarContent = document.createElement("div");
+            toolbarContent.className = "toolbar-content";
+            toolbarContent.innerHTML = toolbarText[0];
+            toolbar.appendChild(toolbarContent);
+        } else if (gameState === "choose enemy") {
+            let chooseEnemyToolbar = document.createElement("div");
+            chooseEnemyToolbar.className = "toolbar-content";
+            chooseEnemyToolbar.innerHTML = toolbarText[1];
+            toolbar.innerHTML = '';
+            toolbar.appendChild(chooseEnemyToolbar);
+        } else {
+            let attackToolbar = document.createElement("div");
+            attackToolbar.className = "toolbar-content";
+            attackToolbar.innerHTML = toolbarText[2];
+            toolbar.innerHTML = '';
+            toolbar.appendChild(attackToolbar);
+        }
+
+    }
+
+    function createCharacterCard(character) {
+        let card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
         <img class="card-img" src="${character.image}">
             <div class="card-descr">
                 <p class="name">${character.name}</p>
@@ -103,10 +186,19 @@ function createCharacterCard(character) {
                 <p class="defense">Defense:${character.defense}</p>
                 <p class="flavor">${character.quote}</p>
             </div>`;
-    card.addEventListener("click", function () {
-        playerChoice = character;
-    });
-    return card;
+        card.addEventListener("click", function () {
+            if (gameState === null) {
+                playerChoice = character;
+                gameState = "choose enemy";
+                main();
+            } else if (gameState === "choose enemy") {
+                enemyChoice = character;
+                gameState = "attack mode";
+                main();
+            }
+        });
+        return card;
+    }
 }
 
 main();
@@ -114,20 +206,12 @@ main();
 
 
 
+//look up truthy and falsey//
 //set up a conditonal sequence in main where it starts with all characters
 
-//when first character is picked, set playerPicked = true executes main again, this time taking away
-//other two characters on their side (also now says choose who you will face first)
-
-//when enemy is chosen, set enemyPicked= true, execute main, take 
-//other two enemies away.
-//disable clickable characters
-//set instructions/controls in middle to attack mode:
-//attack button
-//instructions
 
 //when attack button is pressed:
-//substract (playerAttack - enemyDef) from enemy HP
+//substract (pl - enemyDef) from enemy HP
     //if enemyHp=0 
         //bring other two enemies on the screen
            //choose next enemy
