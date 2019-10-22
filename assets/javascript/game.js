@@ -96,7 +96,22 @@ const toolbarText = [`
 let gameState = null;
 let playerChoice = null;
 let enemyChoice = null;
+let enemiesDefeated = 0
+let enemiesToDefeat = []
 
+// look into switch statements
+// look into truthy and falsey
+//  Things left to do:
+//      -finish attack function
+//          -when enemy dies add remaining enemies
+//              -when none remain, win.
+//      -setup counterattack function 
+//          -check against playerChoice.defense
+//          -subtract from playerChoice.hp
+//      -create
+//
+//
+//
 function main() {
     let darkSide = document.getElementsByClassName("dark-side")[0];
     let lightSide = document.getElementsByClassName("light-side")[0];
@@ -119,26 +134,25 @@ function main() {
             if (playerChoice.sith === true) {
                 darkSide.innerHTML = '';
                 darkSide.appendChild(card);
+                for (let i = 0; i < characters.length; i++) {
+                    if (characters[i].sith === false) {
+                        enemiesToDefeat.push(characters[i]);
+                    }
+                }
+
             } else {
                 lightSide.innerHTML = '';
                 lightSide.appendChild(card);
+                for (let i = 0; i < characters.length; i++) {
+                    if (characters[i].sith === true) {
+                        enemiesToDefeat.push(characters[i]);
+                    }
+                }
             }
 
         } else if (gameState === "attack mode") {
             let card = createCharacterCard(enemyChoice);
-            if (enemyChoice === null) {
-                for (let i = 0; i < characters.length; i++) {
-                    let attackCard = createCharacterCard(characters[i]);
-                    if (playerChoice.sith === false && characters[i].hp > 0) {
-                        darkSide.appendChild(attackCard);
-                    } else if (playerChoice.sith === true && characters[i].hp > 0) {
-                        lightSide.appendChild(attackCard);
-                    } else {
-                        alert("You Win!");
-                    }
-                }
-            }
-            else if (enemyChoice.sith === true) {
+            if (enemyChoice.sith === true) {
                 darkSide.innerHTML = '';
                 darkSide.appendChild(card);
             } else {
@@ -150,6 +164,55 @@ function main() {
 
     }
 
+    //when enemyChoice.hp === 0, clear html,
+    //add remaining two characters back into darkSide or lightSide field.
+    function attack() {
+        enemyChoice.hp -= playerChoice.attack;
+        if (enemyChoice.hp > 0) {
+            characterRender()
+        } else {
+            enemiesDefeated += 1;
+            if (enemiesDefeated === 2) {
+                darkSide.innerHTML = '';
+                lightSide.innerHTML = '';
+                let resetButton = document.createElement('button');
+                resetButton.className = "reset";
+                resetButton.innerHTML = 'Play again?';
+                let toolbarContent = document.createElement("div");
+                toolbarContent.className = "toolbar-content";
+                toolbarContent.innerHTML = toolbarText[0];
+                toolbar.innerHTML = '';
+                toolbar.appendChild(toolbarContent);
+                toolbar.appendChild(resetButton);
+                resetButton.addEventListener('click', function () {
+                    location.reload();
+                });
+            } else {
+                enemiesToDefeat.splice(enemiesToDefeat.indexOf(enemyChoice), 1);
+                enemyChoice = null;
+                gameState = "choose enemy";
+                if (playerChoice.sith === true) {
+                    lightSide.innerHTML = '';
+                } else {
+                    darkSide.innerHTML = '';
+                }
+
+                for (let i = 0; i < enemiesToDefeat.length; i++) {
+                    let card = createCharacterCard(enemiesToDefeat[i]);
+                    if (enemiesToDefeat[i].sith === true) {
+                        darkSide.appendChild(card);
+                    } else {
+                        lightSide.appendChild(card);
+                    }
+                }
+            }
+        }
+        if (enemiesDefeated < 2) {
+            characterRender();
+        }
+    }
+
+
     function toolbarRender() {
         let resetButton = document.createElement('button');
         resetButton.className = "reset";
@@ -157,17 +220,12 @@ function main() {
         resetButton.addEventListener('click', function () {
             location.reload();
         });
+
         let attackButton = document.createElement('button');
         attackButton.className = 'attack';
         attackButton.innerHTML = 'Attack';
         attackButton.addEventListener('click', function () {
-            enemyChoice.hp -= playerChoice.attack;
-            if (enemyChoice.hp <= 0) {
-                enemyChoice = null;
-                characterRender();
-            } else {
-                characterRender();
-            }
+            attack();
         })
 
         if (gameState === null) {
