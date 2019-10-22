@@ -80,30 +80,18 @@ const toolbarText = [`
                     fight the three members from the other side in the order you
                     choose. Your enemies cannot defend but they can counterattack.
                     your attack will go up each time you attack as well. Good Luck!</p>
-                </div>
-                <div class="column controls">
-        
-                    <button>Reset</button>
                 </div>`,
     `<div class="column instructions">
                     <h2>Instructions:</h2>
                     <p>You will have to defeat all three enemies to win!
                         Choose your first opponent wisely.</p>
-                </div>
-                <div class="column controls">
-                   
-                    <button>Reset</button>
                 </div>`,
     `<div class="column instructions">
                     <h2>Instructions</h2>
                     <p>Click attack to strike. Your attack will go up each time.
                     Your enemy will counterattack automatically.</p>
                 </div>
-                <div class="column controls">
-                  
-                    <button>Attack</button>
-                    <button>Reset</button>
-                </div>`
+`
 ];
 let gameState = null;
 let playerChoice = null;
@@ -138,7 +126,19 @@ function main() {
 
         } else if (gameState === "attack mode") {
             let card = createCharacterCard(enemyChoice);
-            if (enemyChoice.sith === true) {
+            if (enemyChoice === null) {
+                for (let i = 0; i < characters.length; i++) {
+                    let attackCard = createCharacterCard(characters[i]);
+                    if (playerChoice.sith === false && characters[i].hp > 0) {
+                        darkSide.appendChild(attackCard);
+                    } else if (playerChoice.sith === true && characters[i].hp > 0) {
+                        lightSide.appendChild(attackCard);
+                    } else {
+                        alert("You Win!");
+                    }
+                }
+            }
+            else if (enemyChoice.sith === true) {
                 darkSide.innerHTML = '';
                 darkSide.appendChild(card);
             } else {
@@ -151,24 +151,46 @@ function main() {
     }
 
     function toolbarRender() {
+        let resetButton = document.createElement('button');
+        resetButton.className = "reset";
+        resetButton.innerHTML = 'Reset';
+        resetButton.addEventListener('click', function () {
+            location.reload();
+        });
+        let attackButton = document.createElement('button');
+        attackButton.className = 'attack';
+        attackButton.innerHTML = 'Attack';
+        attackButton.addEventListener('click', function () {
+            enemyChoice.hp -= playerChoice.attack;
+            if (enemyChoice.hp <= 0) {
+                enemyChoice = null;
+                characterRender();
+            } else {
+                characterRender();
+            }
+        })
 
         if (gameState === null) {
             let toolbarContent = document.createElement("div");
             toolbarContent.className = "toolbar-content";
             toolbarContent.innerHTML = toolbarText[0];
             toolbar.appendChild(toolbarContent);
+            toolbarContent.appendChild(resetButton);
         } else if (gameState === "choose enemy") {
             let chooseEnemyToolbar = document.createElement("div");
             chooseEnemyToolbar.className = "toolbar-content";
             chooseEnemyToolbar.innerHTML = toolbarText[1];
             toolbar.innerHTML = '';
             toolbar.appendChild(chooseEnemyToolbar);
+            chooseEnemyToolbar.appendChild(resetButton);
         } else {
             let attackToolbar = document.createElement("div");
             attackToolbar.className = "toolbar-content";
             attackToolbar.innerHTML = toolbarText[2];
             toolbar.innerHTML = '';
             toolbar.appendChild(attackToolbar);
+            attackToolbar.appendChild(attackButton);
+            attackToolbar.appendChild(resetButton);
         }
 
     }
@@ -191,7 +213,7 @@ function main() {
                 playerChoice = character;
                 gameState = "choose enemy";
                 main();
-            } else if (gameState === "choose enemy") {
+            } else if (gameState === "choose enemy" && character !== playerChoice && character.hp > 0) {
                 enemyChoice = character;
                 gameState = "attack mode";
                 main();
